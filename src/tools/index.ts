@@ -1,4 +1,5 @@
 import type { Server } from '@modelcontextprotocol/sdk/server/index.js';
+import { ListToolsRequestSchema, CallToolRequestSchema } from '@modelcontextprotocol/sdk/types.js';
 import { AuditExecutor } from '../services/audits/audit-executor.js';
 
 const executor = new AuditExecutor();
@@ -102,13 +103,13 @@ const TOOLS = [
 ];
 
 export async function registerTools(server: Server): Promise<void> {
-  server.setRequestHandler('tools/list', async () => {
+  server.setRequestHandler(ListToolsRequestSchema, async () => {
     return {
       tools: TOOLS,
     };
   });
 
-  server.setRequestHandler('tools/call', async (request) => {
+  server.setRequestHandler(CallToolRequestSchema, async (request) => {
     const toolName = request.params.name as string;
     const args = request.params.arguments as Record<string, unknown>;
 
@@ -132,10 +133,28 @@ export async function registerTools(server: Server): Promise<void> {
         if (!args?.url || typeof args.url !== 'string') {
           throw new Error('URL is required');
         }
-        const result = await executor.executeLighthouseAudit(args.url, {
-          categories: args.categories as string[] | undefined,
-          ...(args.options as Record<string, unknown>),
-        });
+        const config: {
+          categories?: string[];
+          timeout?: number;
+          onlyCategories?: string[];
+          skipAudits?: string[];
+        } = {};
+        if (args.categories !== undefined) {
+          config.categories = args.categories as string[];
+        }
+        if (args.options && typeof args.options === 'object') {
+          const opts = args.options as Record<string, unknown>;
+          if (opts.timeout !== undefined) {
+            config.timeout = opts.timeout as number;
+          }
+          if (opts.onlyCategories !== undefined) {
+            config.onlyCategories = opts.onlyCategories as string[];
+          }
+          if (opts.skipAudits !== undefined) {
+            config.skipAudits = opts.skipAudits as string[];
+          }
+        }
+        const result = await executor.executeLighthouseAudit(args.url, config);
         return {
           content: [
             {
@@ -150,9 +169,11 @@ export async function registerTools(server: Server): Promise<void> {
         if (!args?.url || typeof args.url !== 'string') {
           throw new Error('URL is required');
         }
-        const result = await executor.executeWaveAudit(args.url, {
-          apiKey: args.apiKey as string | undefined,
-        });
+        const config: { apiKey?: string } = {};
+        if (args.apiKey !== undefined) {
+          config.apiKey = args.apiKey as string;
+        }
+        const result = await executor.executeWaveAudit(args.url, config);
         return {
           content: [
             {

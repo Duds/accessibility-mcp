@@ -1,4 +1,4 @@
-import type { WaveResult } from '../types/audit.js';
+import type { WaveResult, WaveItem } from '../types/audit.js';
 import { resolveUrl, type ResolvedUrl } from '../utils/url-resolver.js';
 
 const DEFAULT_WAVE_API_URL = 'https://wave.webaim.org/api/request';
@@ -140,19 +140,22 @@ export class WaveAdapter {
           pages: item.pages ?? 0,
           description: item.description ?? '',
         })),
-        contrast: (categories.contrast ?? []).map((item) => ({
-          code: item.code ?? '',
-          count: item.count ?? 0,
-          pages: item.pages ?? 0,
-          description: item.description ?? '',
-          contrast: item.contrast
-            ? {
-                ratio: item.contrast.ratio ?? '',
-                large: item.contrast.large ?? false,
-                expected: item.contrast.expected ?? '',
-              }
-            : undefined,
-        })),
+        contrast: (categories.contrast ?? []).map((item) => {
+          const mappedItem: WaveItem = {
+            code: item.code ?? '',
+            count: item.count ?? 0,
+            pages: item.pages ?? 0,
+            description: item.description ?? '',
+          };
+          if (item.contrast) {
+            mappedItem.contrast = {
+              ratio: item.contrast.ratio ?? '',
+              large: item.contrast.large ?? false,
+              expected: item.contrast.expected ?? '',
+            };
+          }
+          return mappedItem;
+        }),
         alert: (categories.alert ?? []).map((item) => ({
           code: item.code ?? '',
           count: item.count ?? 0,

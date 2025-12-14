@@ -19,29 +19,57 @@ export class AuditExecutor {
   }
 
   async executeAxeAudit(url: string, config?: AuditConfig): Promise<NormalisedAuditResult> {
-    const result = await this.axeAdapter.audit(url, {
-      timeout: config?.timeout,
-      browser: config?.browser,
-      tags: config?.tags,
-      rules: config?.rules,
-    });
+    const options: {
+      timeout?: number;
+      browser?: 'chromium' | 'firefox' | 'webkit';
+      tags?: string[];
+      rules?: Record<string, { enabled: boolean }>;
+    } = {};
+    if (config?.timeout !== undefined) {
+      options.timeout = config.timeout;
+    }
+    if (config?.browser !== undefined) {
+      options.browser = config.browser;
+    }
+    if (config?.tags !== undefined) {
+      options.tags = config.tags;
+    }
+    if (config?.rules !== undefined) {
+      options.rules = config.rules;
+    }
+    const result = await this.axeAdapter.audit(url, options);
     return this.normaliser.normaliseAxeResult(result);
   }
 
   async executeLighthouseAudit(url: string, config?: AuditConfig): Promise<NormalisedAuditResult> {
-    const result = await this.lighthouseAdapter.audit(url, {
-      timeout: config?.timeout,
-      categories: config?.categories,
-      onlyCategories: config?.onlyCategories,
-      skipAudits: config?.skipAudits,
-    });
+    const options: {
+      timeout?: number;
+      categories?: string[];
+      onlyCategories?: string[];
+      skipAudits?: string[];
+    } = {};
+    if (config?.timeout !== undefined) {
+      options.timeout = config.timeout;
+    }
+    if (config?.categories !== undefined) {
+      options.categories = config.categories;
+    }
+    if (config?.onlyCategories !== undefined) {
+      options.onlyCategories = config.onlyCategories;
+    }
+    if (config?.skipAudits !== undefined) {
+      options.skipAudits = config.skipAudits;
+    }
+    const result = await this.lighthouseAdapter.audit(url, options);
     return this.normaliser.normaliseLighthouseResult(result);
   }
 
   async executeWaveAudit(url: string, config?: AuditConfig & { apiKey?: string }): Promise<NormalisedAuditResult> {
-    const result = await this.waveAdapter.audit(url, {
-      apiKey: config?.apiKey,
-    });
+    const options: { apiKey?: string } = {};
+    if (config?.apiKey !== undefined) {
+      options.apiKey = config.apiKey;
+    }
+    const result = await this.waveAdapter.audit(url, options);
     return this.normaliser.normaliseWaveResult(result);
   }
 

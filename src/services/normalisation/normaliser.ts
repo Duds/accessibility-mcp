@@ -62,9 +62,9 @@ export class Normaliser {
           outcome: 'unknown',
           selector,
           dom_context: domContext,
-          message: incomplete.help,
-          reason_code: 'INCOMPLETE_CHECK',
-        });
+            message: incomplete.help,
+            ...(incomplete.help ? { reason_code: 'INCOMPLETE_CHECK' as const } : {}),
+          });
       }
     }
 
@@ -111,7 +111,7 @@ export class Normaliser {
             selector: node.selector ?? '',
             dom_context: node.snippet ?? '',
             message: audit.description,
-            reason_code: outcome === 'unknown' ? 'SCORE_AMBIGUOUS' : undefined,
+            ...(outcome === 'unknown' ? { reason_code: 'SCORE_AMBIGUOUS' as const } : {}),
           });
         }
       } else {
@@ -124,8 +124,13 @@ export class Normaliser {
           selector: '',
           dom_context: '',
           message: audit.description,
-          reason_code: outcome === 'unknown' ? 'SCORE_AMBIGUOUS' : undefined,
         });
+        if (outcome === 'unknown') {
+          const lastItem = normalisedResults[normalisedResults.length - 1];
+          if (lastItem) {
+            lastItem.reason_code = 'SCORE_AMBIGUOUS';
+          }
+        }
       }
     }
 
