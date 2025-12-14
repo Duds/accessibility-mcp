@@ -1,0 +1,29 @@
+{
+  "statsummary": {
+    "total": 1,
+    "error": 1,
+    "contrast": 0,
+    "alert": 0,
+    "feature": 0,
+    "structure": 0,
+    "aria": 0
+  },
+  "categories": {
+    "error": [
+      {
+        "code": "error_alt_missing",
+        "count": 1,
+        "pages": 1,
+        "description": "Missing alternative text"
+      }
+    ],
+    "contrast": [],
+    "alert": [],
+    "feature": [],
+    "structure": [],
+    "aria": []
+  },
+  "url": "https://example.com",
+  "timestamp": "2024-01-01T00:00:00.000Z"
+}
+

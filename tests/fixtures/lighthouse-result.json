@@ -1,0 +1,55 @@
+{
+  "url": "https://example.com",
+  "fetchTime": "2024-01-01T00:00:00.000Z",
+  "audits": {
+    "image-alt": {
+      "id": "image-alt",
+      "title": "Image elements have [alt] attributes",
+      "description": "Informative elements should aim for short, descriptive alternate text. Decorative elements can be ignored with an empty alt attribute.",
+      "score": 0,
+      "scoreDisplayMode": "binary",
+      "details": {
+        "type": "table",
+        "headings": [
+          {
+            "key": "node",
+            "itemType": "node",
+            "text": "Element"
+          }
+        ],
+        "items": [
+          {
+            "node": {
+              "type": "node",
+              "path": "1,HTML,1,BODY,0,IMG",
+              "selector": "img",
+              "snippet": "<img src=\"logo.png\">"
+            }
+          }
+        ],
+        "nodes": [
+          {
+            "path": "1,HTML,1,BODY,0,IMG",
+            "selector": "img",
+            "snippet": "<img src=\"logo.png\">"
+          }
+        ]
+      }
+    }
+  },
+  "categories": {
+    "accessibility": {
+      "id": "accessibility",
+      "title": "Accessibility",
+      "score": 0.5,
+      "description": "These checks highlight opportunities to improve the accessibility of your web app.",
+      "auditRefs": [
+        {
+          "id": "image-alt",
+          "weight": 10
+        }
+      ]
+    }
+  }
+}
+
